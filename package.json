@@ -8,7 +8,7 @@
   },
   "private": true,
   "scripts": {
-    "devx": "./node_modules/nodemon/bin/nodemon.js",
+    "loaddb": "npm run load src/resources/data/sites.json flushdb",
     "dev": "nodemon ./src/app.js",
     "load": "node src/utils/data_loader.js --",
     "lint": "./node_modules/eslint/bin/eslint.js src tests",
