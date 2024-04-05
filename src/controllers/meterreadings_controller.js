@@ -14,6 +14,8 @@ const feedDao = require('../daos/feed_dao');
 const createMeterReadings = async (meterReadings) => {
   for (const meterReading of meterReadings) {
     /* eslint-disable no-await-in-loop */
+    console.log('meterReading = ', meterReading)
+    
     await metricDao.insert(meterReading);
     await siteStatsDao.update(meterReading);
     await capacityDao.update(meterReading);

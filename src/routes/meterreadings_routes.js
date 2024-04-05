@@ -34,6 +34,8 @@ router.post(
   ],
   async (req, res, next) => {
     try {
+      console.log('req.body =', req.body); 
+      
       await controller.createMeterReadings(req.body);
       return res.status(201).send('OK');
     } catch (err) {
