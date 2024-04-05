@@ -55,11 +55,16 @@ const extractMeasurementMinute = (measurementMinute) => {
 const insertMetric = async (siteId, metricValue, metricName, timestamp) => {
   const client = redis.getClient();
 
-  const metricKey = keyGenerator.getDayMetricKey(siteId, metricName, timestamp);
-  const minuteOfDay = timeUtils.getMinuteOfDay(timestamp);
+  const metricKey = keyGenerator.getDayMetricKey(siteId, metricName, timestamp);  // key
+  const minuteOfDay = timeUtils.getMinuteOfDay(timestamp);  // score
 
-  // START Challenge #2
-  // END Challenge #2
+  // START Challenge #2 (2024/04/05)
+  // console.log(`loop siteId = ${siteId}`)
+  // console.log(`loop metricValue = ${metricValue}`)
+  // console.log(`loop metricName = ${siteId}`)
+  // console.log(`loop timestamp = ${timestamp}`)
+  return client.zadd(metricKey, minuteOfDay, `${metricValue}:${minuteOfDay}`)
+  // END Challenge #2 (2024/04/05)
 };
 /* eslint-enable */
 
