@@ -59,6 +59,7 @@ const updateOptimized = async (meterReading) => {
   await compareAndUpdateScript.load();
 
   // START Challenge #3
+  
   // END Challenge #3
 };
 /* eslint-enable */
