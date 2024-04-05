@@ -63,7 +63,12 @@ const insertMetric = async (siteId, metricValue, metricName, timestamp) => {
   // console.log(`loop metricValue = ${metricValue}`)
   // console.log(`loop metricName = ${siteId}`)
   // console.log(`loop timestamp = ${timestamp}`)
-  return client.zadd(metricKey, minuteOfDay, `${metricValue}:${minuteOfDay}`)
+
+  //return client.zadd(metricKey, minuteOfDay, `${metricValue}:${minuteOfDay}`)
+  return client.multi()
+    .zadd(metricKey, minuteOfDay, `${metricValue}:${minuteOfDay}`)
+    .expire(metricKey, metricExpirationSeconds)
+    .exec()
   // END Challenge #2 (2024/04/05)
 };
 /* eslint-enable */

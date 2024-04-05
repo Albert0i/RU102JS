@@ -107,14 +107,14 @@ const findAll = async () => {
   for (i=0; i< ids.length; i++) {
     words = ids[i].split(':');
     id = words[words.length-1];
-    console.log(`id = ${id}`) 
+    //console.log(`id = ${id}`) 
 
     siteHash = await findById(id);
-    console.log('siteHash') 
-    console.log(siteHash)
+    //console.log('siteHash') 
+    //console.log(siteHash)
 
     allSites.push(siteHash)
-    console.log(`loop allSites.length = ${allSites.length}`);
+    //console.log(`loop allSites.length = ${allSites.length}`);
   }
   
   console.log(`final allSites.length = ${allSites.length}`);
