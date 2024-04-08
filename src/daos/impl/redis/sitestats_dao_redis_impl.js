@@ -58,9 +58,35 @@ const updateOptimized = async (meterReading) => {
   // Load script if needed, uses cached SHA if already loaded.
   await compareAndUpdateScript.load();
 
-  // START Challenge #3
-  
-  // END Challenge #3
+  // START Challenge #3 (2024/04/08)
+  const maxCapacity = await client.hgetAsync(key, 'maxCapacity');
+  console.log(`maxCapacity = ${maxCapacity}`)
+  // transaction part 1 
+  const transaction = client.multi();
+  transaction.hset(key, 'lastReportingTime', timeUtils.getCurrentTimestamp(),
+  );
+  transaction.hincrby(key, 'meterReadingCount', 1);
+  transaction.expire(key, weekSeconds);
+  // transaction part 2 
+  //const maxCapacity = transaction.hget(key, 'maxCapacity');
+  const readingCapacity = meterReading.whGenerated - meterReading.whUsed;
+  if (maxCapacity === null || readingCapacity > parseFloat(maxCapacity)) {
+    transaction.hset(key, 'maxCapacity', readingCapacity);
+  }
+
+  const reaponses = await transaction.execAsync()
+  console.log('transaction reaponses = ', reaponses)  
+
+  // lua scrpt part 
+  const result1 = await client.evalshaAsync(
+    compareAndUpdateScript.updateIfGreater(key, 'maxWhGenerated', meterReading.whGenerated),
+  );  
+  const result2 = await client.evalshaAsync(
+    compareAndUpdateScript.updateIfLess(key, 'minWhGenerated', meterReading.whGenerated),
+  );  
+  console.log('result1 = ', result1)
+  console.log('result2 = ', result2)
+  // END Challenge #3 (2024/04/08)  
 };
 /* eslint-enable */
 
@@ -107,5 +133,6 @@ const updateBasic = async (meterReading) => {
 
 module.exports = {
   findById,
-  update: updateBasic, // updateOptimized
+  //update: updateBasic, // updateOptimized
+  update: updateOptimized
 };
