@@ -118,7 +118,7 @@ test(`${testSuiteName}: getReport`, async () => {
 });
 
 // This test is for Challenge #4.
-test.skip(`${testSuiteName}: getRank`, async () => {
+test(`${testSuiteName}: getRank`, async () => {
   // Create some data
   const entries = [
     {
@@ -174,3 +174,11 @@ test.skip(`${testSuiteName}: getRank`, async () => {
 });
 
 /* eslint-enable */
+/*
+rev rank
+  0 { score:50, id: 5} 
+  1 { score:30, id: 3}  
+  2 { score:20, id: 4}  
+  3 { score:15, id: 2}  
+  4 { score:10, id: 1}  
+*/
