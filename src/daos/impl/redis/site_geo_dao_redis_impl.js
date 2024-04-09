@@ -114,19 +114,42 @@ const findAll = async () => {
   const siteIds = await client.zrangeAsync(keyGenerator.getSiteGeoKey(), 0, -1);
   const sites = [];
 
+  // for (const siteId of siteIds) {
+  //   const siteKey = keyGenerator.getSiteHashKey(siteId);
+
+  //   /* eslint-disable no-await-in-loop */
+  //   const siteHash = await client.hgetallAsync(siteKey);
+  //   /* eslint-enable */
+
+  //   if (siteHash) {
+  //     // Call remap to remap the flat key/value representation
+  //     // from the Redis hash into the site domain object format.
+  //     sites.push(remap(siteHash));
+  //   }
+  // }
+  
+  /* 
+     Can you modify this function's implementation so that it uses pipelining to send all of the HGETALL commands in a single round trip to the Redis server?
+  */
+  // Optional: Bonus Challenge of Week 3 (2024/04/09)
+    const pipeline = client.batch()
   for (const siteId of siteIds) {
     const siteKey = keyGenerator.getSiteHashKey(siteId);
 
-    /* eslint-disable no-await-in-loop */
-    const siteHash = await client.hgetallAsync(siteKey);
-    /* eslint-enable */
-
+    pipeline.hgetall(siteKey)
+  }
+  const siteHashes = await pipeline.execAsync()
+  console.log('siteHashes = ', siteHashes)
+  
+  for (const siteHash of siteHashes) 
+  {
     if (siteHash) {
       // Call remap to remap the flat key/value representation
       // from the Redis hash into the site domain object format.
       sites.push(remap(siteHash));
     }
   }
+  // Optional: Bonus Challenge of Week 3 (2024/04/09)
 
   return sites;
 };
