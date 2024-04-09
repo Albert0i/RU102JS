@@ -21,16 +21,30 @@ const hitSlidingWindow = async (name, opts) => {
   const random = Math.floor(Math.random() * 1000) + 1;
   //console.log('random: ', random)
 
-  //const transaction = client.multi();
+  // *** single step non-transaction version  *** 
   let result; 
-  result = await client.zaddAsync("XXX", currentTimestamp, `${currentTimestamp}-${random}`)
-  console.log(`result 1 = ${result}`)
-  result = await client.zremrangebyscoreAsync("XXX", 0, currentTimestamp - opts.interval);
-  console.log(`result 2 = ${result}`)
-  result = await client.zcardAsync("XXX")
-  console.log(`result 3 = ${result}`)
+  result = await client.zaddAsync(key, currentTimestamp, `${currentTimestamp}-${random}`)
+  //console.log(`result 1 = ${result}`)
+  result = await client.zremrangebyscoreAsync(key, 0, currentTimestamp - opts.interval);
+  //console.log(`result 2 = ${result}`)
+  result = await client.zcardAsync(key)  
+  const hits = parseInt(result, 10)
+  //console.log(`hits = ${hits}`)
+  let hitsRemaining;
+
+  if (hits > opts.maxHits) {
+    // Too many hits.
+    hitsRemaining = -1;
+  } else {
+    // Return number of hits remaining.
+    hitsRemaining = opts.maxHits - hits;
+  }
+  // *** transaction version  *** 
+  
+
+
+  return hitsRemaining;
   //return -2;
-  return result; 
   // END Challenge #7 (2024/04/10)
 };
 
