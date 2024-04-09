@@ -23,18 +23,21 @@ if (config.get('dataStores.redis.password')) {
 const client = redis.createClient(clientConfig);
 
 // This is a catch all basic error handler.
-client.on('error', error => console.log(error));
+client.on('error', error => { 
+      console.log(error) 
+    });
 client.on('ready', () => { 
-      console.log(`Successfully connected to host "${config.get('dataStores.redis.host')}" on port "${config.get('dataStores.redis.port')}"`)
-      console.log('Redis client is ready...')
+      //console.log(`Successfully connected to host "${config.get('dataStores.redis.host')}" on port "${config.get('dataStores.redis.port')}"`)
+      //console.log('Redis client is ready...')
     } ) 
-client.on('end', () => console.log('Redis connection is closed.') ) 
+client.on('end', () => { 
+      //console.log('Redis connection is closed.')
+    } ) 
 client.on('reconnecting', (o) => {
-      console.log('Redis client is reconnecting!')
-      console.log(`Attempt number: ${o.attempt}.`)
-      console.log(`Milliseconds sence last attempt: ${o.delay}.`) 
+      //console.log('Redis client is reconnecting!')
+      //console.log(`Attempt number: ${o.attempt}.`)
+      //console.log(`Milliseconds sence last attempt: ${o.delay}.`) 
     } ) 
-
 
 module.exports = {
   /**

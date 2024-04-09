@@ -52,7 +52,7 @@ const runSlidingWindowTests = async (name, limiterOpts, howMany) => {
 };
 
 // Challenge 7. Remove '.skip' to enable test.
-test.skip(`${testSuiteName}: hit (sliding window limit not exceeded)`, async () => {
+test(`${testSuiteName}: hit (sliding window limit not exceeded)`, async () => {
   const results = await runSlidingWindowTests('testresource', {
     interval: 10000,
     maxHits: 5,
