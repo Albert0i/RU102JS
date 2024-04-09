@@ -22,14 +22,30 @@ const hitSlidingWindow = async (name, opts) => {
   //console.log('random: ', random)
 
   // *** single step non-transaction version  *** 
-  let result; 
-  result = await client.zaddAsync(key, currentTimestamp, `${currentTimestamp}-${random}`)
-  //console.log(`result 1 = ${result}`)
-  result = await client.zremrangebyscoreAsync(key, 0, currentTimestamp - opts.interval);
-  //console.log(`result 2 = ${result}`)
-  result = await client.zcardAsync(key)  
-  const hits = parseInt(result, 10)
-  //console.log(`hits = ${hits}`)
+  // let result; 
+  // result = await client.zaddAsync(key, currentTimestamp, `${currentTimestamp}-${random}`)
+  // //console.log(`result 1 = ${result}`)
+  // result = await client.zremrangebyscoreAsync(key, 0, currentTimestamp - opts.interval);
+  // //console.log(`result 2 = ${result}`)
+  // result = await client.zcardAsync(key)  
+  // const hits = parseInt(result, 10)
+  // //console.log(`hits = ${hits}`)
+  // let hitsRemaining;
+
+  // if (hits > opts.maxHits) {
+  //   // Too many hits.
+  //   hitsRemaining = -1;
+  // } else {
+  //   // Return number of hits remaining.
+  //   hitsRemaining = opts.maxHits - hits;
+  // }
+  // *** transaction version  *** 
+  const transaction = client.multi()
+  transaction.zadd(key, currentTimestamp, `${currentTimestamp}-${random}`)
+  transaction.zremrangebyscore(key, 0, currentTimestamp - opts.interval);  
+  transaction.zcard(key)
+  const results = await transaction.execAsync()
+  const hits = parseInt(results[2], 10)
   let hitsRemaining;
 
   if (hits > opts.maxHits) {
@@ -39,9 +55,6 @@ const hitSlidingWindow = async (name, opts) => {
     // Return number of hits remaining.
     hitsRemaining = opts.maxHits - hits;
   }
-  // *** transaction version  *** 
-  
-
 
   return hitsRemaining;
   //return -2;
