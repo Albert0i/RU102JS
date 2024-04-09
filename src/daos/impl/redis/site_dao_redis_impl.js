@@ -117,7 +117,7 @@ const findAll = async () => {
     //console.log(`loop allSites.length = ${allSites.length}`);
   }
   
-  console.log(`final allSites.length = ${allSites.length}`);
+  //console.log(`final allSites.length = ${allSites.length}`);
   return allSites;
   //return [];    
   // End fix 

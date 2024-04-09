@@ -60,7 +60,7 @@ const updateOptimized = async (meterReading) => {
 
   // START Challenge #3 (2024/04/08)
   const maxCapacity = await client.hgetAsync(key, 'maxCapacity');
-  console.log(`maxCapacity = ${maxCapacity}`)
+  //console.log(`maxCapacity = ${maxCapacity}`)
   // transaction part 1 
   const transaction = client.multi();
   transaction.hset(key, 'lastReportingTime', timeUtils.getCurrentTimestamp(),
@@ -75,7 +75,7 @@ const updateOptimized = async (meterReading) => {
   }
 
   const reaponses = await transaction.execAsync()
-  console.log('transaction reaponses = ', reaponses)  
+  //console.log('transaction reaponses = ', reaponses)  
 
   // lua scrpt part 
   const result1 = await client.evalshaAsync(
@@ -84,8 +84,8 @@ const updateOptimized = async (meterReading) => {
   const result2 = await client.evalshaAsync(
     compareAndUpdateScript.updateIfLess(key, 'minWhGenerated', meterReading.whGenerated),
   );  
-  console.log('result1 = ', result1)
-  console.log('result2 = ', result2)
+  //console.log('result1 = ', result1)
+  //console.log('result2 = ', result2)
   // END Challenge #3 (2024/04/08)  
 };
 /* eslint-enable */
