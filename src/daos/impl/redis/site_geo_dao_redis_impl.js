@@ -139,8 +139,8 @@ const findAll = async () => {
     pipeline.hgetall(siteKey)
   }
   const siteHashes = await pipeline.execAsync()
-  console.log('siteHashes = ', siteHashes)
-  
+  //console.log('siteHashes = ', siteHashes)
+
   for (const siteHash of siteHashes) 
   {
     if (siteHash) {
@@ -202,8 +202,8 @@ const findByGeo = async (lat, lng, radius, radiusUnit) => {
  */
 const findByGeoWithExcessCapacity = async (lat, lng, radius, radiusUnit) => {
   /* eslint-disable no-unreachable */
-  // Challenge #5, remove the next line...
-  return [];
+  // Challenge #5, remove the next line... (2024/04/09)
+  //return [];
 
   const client = redis.getClient();
 
@@ -213,7 +213,8 @@ const findByGeoWithExcessCapacity = async (lat, lng, radius, radiusUnit) => {
   // Get sites within the radius and store them in a temporary sorted set.
   const sitesInRadiusSortedSetKey = keyGenerator.getTemporaryKey();
 
-  setOperationsPipeline.georadiusAsync(
+  //setOperationsPipeline.georadiusAsync(
+  setOperationsPipeline.georadius(
     keyGenerator.getSiteGeoKey(),
     lng,
     lat,
@@ -227,8 +228,28 @@ const findByGeoWithExcessCapacity = async (lat, lng, radius, radiusUnit) => {
   // within the radius and their current capacities.
   const sitesInRadiusCapacitySortedSetKey = keyGenerator.getTemporaryKey();
 
-  // START Challenge #5
-  // END Challenge #5
+  // START Challenge #5 (2024/04/09)
+  // ZINTERSTORE
+  // ZINTERSTORE destination numkeys key [key ...] [WEIGHTS weight [weight ...]] [AGGREGATE <SUM | MIN | MAX>]
+  // https://redis.io/docs/latest/commands/zinterstore/
+  /*
+     Using the WEIGHTS option, it is possible to specify a multiplication factor for each input sorted set. This means that the score of every element in every input sorted set is multiplied by this factor before being passed to the aggregation function. When WEIGHTS is not given, the multiplication factors default to 1.  
+
+     With the AGGREGATE option, it is possible to specify how the results of the union are aggregated. This option defaults to SUM, where the score of an element is summed across the inputs where it exists. When this option is set to either MIN or MAX, the resulting set will contain the minimum or maximum score of an element across the inputs where it exists.
+
+     In our case: 
+     Every element's score of sitesInRadiusSortedSetKey is multipy by zero, 
+     Every element's score of keyGenerator.getCapacityRankingKey() is multipy by one, 
+     The final element's score of sitesInRadiusCapacitySortedSetKey will be the sum. 
+  */
+  setOperationsPipeline.zinterstore(sitesInRadiusCapacitySortedSetKey, 
+                                    2, 
+                                    sitesInRadiusSortedSetKey, 
+                                    keyGenerator.getCapacityRankingKey(),
+                                    'WEIGHTS', 
+                                    0, 
+                                    1)
+  // END Challenge #5 (2024/04/09)
 
   // Expire the temporary sorted sets after 30 seconds, so that we
   // don't leave old keys on the server that we no longer need.
@@ -237,7 +258,8 @@ const findByGeoWithExcessCapacity = async (lat, lng, radius, radiusUnit) => {
 
   // Execute the set operations commands, we do not need to
   // use the responses.
-  await setOperationsPipeline.execAsync();
+  const results = await setOperationsPipeline.execAsync();
+  //console.log('results =', results)
 
   // Get sites IDs with enough capacity from the temporary
   // sorted set and store them in siteIds.
