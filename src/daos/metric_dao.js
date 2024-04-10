@@ -2,6 +2,8 @@ const daoLoader = require('./daoloader');
 
 // Week 4, change this from 'metric' to 'metric_ts'.
 const impl = daoLoader.loadDao('metric');
+// Hands-On Activity (2024/04/10)
+//const impl = daoLoader.loadDao('metric_ts');
 
 module.exports = {
   /**
