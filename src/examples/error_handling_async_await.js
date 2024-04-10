@@ -41,8 +41,9 @@ const replyErrorExamples = async () => {
 
   // Error in pipeline... (transaction produces same behavior).
   try {
-    console.log('Bad command as part of a pipeline.');
+    console.log('Bad command as part of a pipeline/transaction.');
     const pipeline = client.batch();
+    //const pipeline = client.multi();
     // This command will succeed.
     pipeline.set(key, 'test');
 

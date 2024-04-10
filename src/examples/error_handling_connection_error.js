@@ -15,7 +15,7 @@ const connectionErrorExample = async () => {
           return new Error('Retry attempts exhausted.');
         }
 
-        // Try again after a period of time...
+        // Try again after a period of time in ms...
         return (options.attempt * 1000);
       },
     });
@@ -45,6 +45,7 @@ const connectionErrorExample = async () => {
 };
 
 try {
+  console.log('----------')
   connectionErrorExample();
 } catch (err) {
   console.log('Caught exception:');

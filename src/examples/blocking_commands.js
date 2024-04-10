@@ -29,7 +29,7 @@ const startConsumer = async () => {
       console.log('consumer: queue was empty.');
       retryCount += 1;
 
-      if (retryCount === 5) {
+      if (retryCount === 3) {
         done = true;
         console.log('consumer: shutting down.');
         consumerClient.quit();
@@ -63,7 +63,7 @@ const startProducer = async () => {
     n += 1;
 
     // Stop after producing 20 numbers.
-    if (n > 20) {
+    if (n > 10) {
       console.log('producer: shutting down.');
       clearInterval(producerInterval);
       producerClient.quit();

@@ -14,6 +14,15 @@ bluebird.promisifyAll(redis);
 const clientConfig = {
   host: config.get('dataStores.redis.host'),
   port: config.get('dataStores.redis.port'),
+  
+  retry_strategy: (options) => {
+    if (options.attempt > 5) {
+      return new Error('Retry attempts exhausted.');
+    }
+
+    // Try again after a period of time in ms...
+    return (options.attempt * 1000);
+  },
 };
 
 if (config.get('dataStores.redis.password')) {
